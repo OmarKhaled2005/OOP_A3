@@ -29,17 +29,30 @@ bool X_O_Board::update_board (int x, int y, char mark){
 
 // Display the board and the pieces on it
 void X_O_Board::display_board() {
-   for (int i=0;i<n_rows;i++) {
-       if(i==0)cout << "\n      | ";
-       else if(i==1) cout<<"\n    |";
-       else if(i==2)cout<<"\n|";
-       for (int j=0;j<i*2+1;j++) {
-         cout << setw(2) << board [i][j] << " |";
+    for (int i=0;i<n_rows;i++) {
+        if(i==0)cout << "\n               | ";
+        else if(i==1) cout<<"\n       |";
+        else if(i==2)cout<<"\n|";
+        for (int j=0;j<i*2+1;j++) {
+             cout << "(" << i << "," << j << ")";
+             cout << setw(2) << board [i][j] << " |";
       }
       cout << "\n-----------------------------";
-   }
-   cout << endl;
-}
+       }
+    cout << endl;
+ }
+// void X_O_Board::display_board() {
+//    for (int i=0;i<n_rows;i++) {
+//        if(i==0)cout << "\n      | ";
+//        else if(i==1) cout<<"\n    |";
+//        else if(i==2)cout<<"\n|";
+//        for (int j=0;j<i*2+1;j++) {
+//          cout << setw(2) << board [i][j] << " |";
+//       }
+//       cout << "\n-----------------------------";
+//    }
+//    cout << endl;
+// }
 
 
 
