@@ -1,0 +1,272 @@
+#include <iostream>
+#include <random>  
+using namespace std;
+
+int randint(int min, int max) {
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<int> distribution(min, max);
+    return distribution(gen);
+}
+class ConnectFourGame {
+private:
+    char game_board[6][7];
+    int col_limiter[7];
+    int counter;
+    char player;
+
+public:
+    ConnectFourGame() {
+        // Initialize the game board and col_limiter
+        for (int i = 0; i < 6; ++i) {
+            for (int j = 0; j < 7; ++j) {
+                game_board[i][j] = '.';
+            }
+        }
+
+        for (int i = 0; i < 7; ++i) {
+            col_limiter[i] = 0;
+        }
+
+        counter = 1;
+    }
+
+    void displayBoard() {
+        for (int i = 0; i < 6; ++i) {
+            for (int j = 0; j < 7; ++j) {
+                cout << game_board[i][j] << "     ";
+            }
+            cout << endl << endl;
+        }
+    }
+
+bool playGame() {
+    int column_chosen, current_row, current_column;
+    int player_type, player_mark;
+    cout << "Welcome to Connect 4 game!" << endl <<"Do you like to play against 1.Player or 2.Computer, then select which you'll play 1. X or 2. O? "<< endl;
+    cin >> player_type >> player_mark;
+
+    while ((player_type < 1 || player_type > 2) || (player_mark < 1 || player_mark > 2)) {
+        cout << "Please choose either 1 or 2 and either X or O" << endl;
+        cin >> player_type >> player_mark;        
+    }
+
+    while (WinnerCheck(current_row, current_column) == false) {
+        displayBoard();
+
+        if (player_type == 2) {
+            if (player_mark == 1) {
+                if (counter % 2 != 0) {
+                    player = 'X';
+                    cout << "Player 1 choose the column to drop X" << endl;
+                    cin >> column_chosen;
+                } else {
+                    player = 'O';
+                    column_chosen = randint(1, 7);
+                    while (col_limiter[column_chosen - 1] >= 6) {
+                        column_chosen = randint(1, 7);
+                    }
+                }
+            } else if (player_mark == 2) {
+                if (counter % 2 == 0) {
+                    player = 'O';
+                    cout << "Player 2 choose the column to drop O" << endl;
+                    cin >> column_chosen;
+                } else {
+                    player = 'X';
+                    column_chosen = randint(1, 7);
+                    while (col_limiter[column_chosen - 1] >= 6) {
+                        column_chosen = randint(1, 7);
+                    }
+                }  
+            }
+        } else if (player_type == 1) {
+            if (player_mark == 1) {
+                if (counter % 2 != 0) {
+                    player = 'X';
+                    cout << "Player 1 choose the column to drop X" << endl;
+                    cin >> column_chosen;
+                } else {
+                    player = 'O';
+                    column_chosen = randint(1, 7);
+                    while (col_limiter[column_chosen - 1] >= 6) {
+                        column_chosen = randint(1, 7);
+                    }
+                }            
+            } else if (player_mark == 2) {
+                if (counter % 2 == 0) {
+                    player = 'O';
+                    cout << "Player 2 choose the column to drop O" << endl;
+                    cin >> column_chosen;
+                } else {
+                    player = 'X';
+                    column_chosen = randint(1, 7);
+                    while (col_limiter[column_chosen - 1] >= 6) {
+                        column_chosen = randint(1, 7);
+                    }
+                }
+            }
+        }
+
+        cout << endl;
+
+        while (column_chosen < 1 || column_chosen > 7 || col_limiter[column_chosen - 1] >= 6) {
+            cout << "Invalid input! Please choose a valid column!" << endl;
+            displayBoard();
+            cin >> column_chosen;
+        }
+
+        col_limiter[column_chosen - 1]++;
+
+        for (int x = 5; x >= 0; --x) {
+            if (game_board[x][column_chosen - 1] == '.') {
+                game_board[x][column_chosen - 1] = player;
+                current_row = x;
+                current_column = --column_chosen;
+                break;
+            }
+        }
+
+        if (WinnerCheck(current_row, current_column) == true && counter % 2 != 0) {
+            for (int i = 0; i < 6; ++i) {
+                for (int j = 0; j < 7; ++j) {
+                    cout << game_board[i][j] << "     ";
+                }
+                cout << endl << endl;
+            }
+            cout << "Player 1 is the Winner!" << endl;
+            break;
+        } else if (WinnerCheck(current_row, current_column) == true && counter % 2 == 0) {
+            for (int i = 0; i < 6; ++i) {
+                for (int j = 0; j < 7; ++j) {
+                    cout << game_board[i][j] << "     ";
+                }
+                cout << endl << endl;
+            }
+            cout << "Player 2 is the Winner!" << endl;
+            break;
+        } else if (counter == 42) {
+            cout << "No Winner, the game is a tie!" << endl;
+            break;
+        }
+        counter++;
+    }
+
+    return false;
+}
+
+    bool WinnerCheck(int current_row, int current_column) {
+        int count = 0;
+        const int rows = 6, cols = 7;
+        char q = player;
+        int r = current_row;
+
+    // Horizontal Winning Checker
+    count = 0;  // Reset count for horizontal check
+    for (int j = current_column; j >= 0; --j) {
+        if (game_board[current_row][j] == q) {
+        count++;
+    } else {
+        break; 
+        }
+    }
+        if (count >= 4) {
+            return true;
+            }
+    count = 0;
+for (int j = current_column + 1; j < cols; ++j) {
+    if (game_board[current_row][j] == q) {
+        count++;
+    } else {
+        break; 
+    }
+}
+if (count >= 4) {
+    return true;
+    count = 0;
+}
+
+
+        // Vertical Winning Checker
+        count = 0;
+        for (int i = current_row; i < rows; ++i) {
+            if (game_board[i][current_column] == q) {
+                count++;
+            }
+        else{
+            break;
+        }
+        }
+        if (count >= 4) {
+                return true;
+            }
+        count = 0;
+        r = current_row;
+
+        // Diagonal Checker (Left to right and Right to left)
+        for (int i = current_column + 1; i < 7; i++) {
+            if (r <= 5 && i <= 6 && i >= 0) {
+                if (game_board[r][i] == q) {
+                    count++;
+                }
+                r++;
+            }
+
+        }
+        if (count >= 4) {
+                return true;
+            }
+        count = 0;
+        r = current_row;
+        for (int i = current_column + 1; i < 7; i++) {
+            if (r >= 0 && i <= 6 && i >= 0) {
+                if (game_board[r][i] == q) {
+                    count++;
+                }
+                r--;
+            }
+            if (count >= 4) {
+                return true;
+            }
+        }
+            if (count >= 4) {
+                return true;
+            }
+        count = 0;
+        r = current_row;
+
+        for (int i = current_column; i >= 0; i--) {
+            if (r <= 5 && r >= 0 && i <= 6 && i >= 0) {
+                if (game_board[r][i] == player) {
+                    count++;
+                }
+                r--;
+            }
+        }
+            if (count >= 4) {
+                return true;
+            }
+        count = 0;
+        r = current_row;
+
+        for (int i = current_column; i >= 0; i--) {
+            if (r <= 5 && r >= 0 && i <= 6 && i >= 0) {
+                if (game_board[r][i] == player) {
+                    count++;
+                }
+                r++;
+            }
+
+        }
+
+        return false;
+    }
+
+
+};
+
+int main() {
+ConnectFourGame game;
+game.playGame();
+ return 0;
+}
